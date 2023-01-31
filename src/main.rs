@@ -13,7 +13,7 @@ use std::{
 };
 
 /// A simple tool for building fake command line interfaces
-#[derive(Parser, Debug)]
+#[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 #[command(propagate_version = true)]
 struct Cli {
