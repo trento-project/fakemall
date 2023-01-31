@@ -1,0 +1,107 @@
+mod dockerfile;
+mod error;
+mod set;
+
+use clap::{Parser, Subcommand};
+use error::FakeshError;
+use std::{
+    fs::{self, File},
+    io::{Read, Write},
+    os::unix::prelude::PermissionsExt,
+    path::PathBuf,
+    process,
+};
+
+/// A simple tool for building fake command line interfaces
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+#[command(propagate_version = true)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand, Debug)]
+enum Commands {
+    /// Execute a command from a set
+    Exec {
+        /// Set to execute command from
+        set: String,
+        /// Command to execute
+        command: String,
+    },
+    /// Save a command output to a set
+    Save {
+        /// Set to save command to
+        set: String,
+        /// Command to save
+        command: String,
+    },
+    /// Build an environment from a set
+    Build {
+        /// Set to build
+        set: String,
+        /// Path to build set in
+        path: String,
+    },
+}
+
+fn main() -> Result<(), FakeshError> {
+    let cli = Cli::parse();
+
+    match &cli.command {
+        Commands::Exec { set, command } => exec(set, command.trim()),
+        Commands::Save { set, command } => todo!(),
+        Commands::Build { set, path } => build(set, path),
+    }
+}
+
+fn exec(set: &str, command: &str) -> Result<(), FakeshError> {
+    let mut toml_file = File::open(set)?;
+    let mut toml_string = String::new();
+
+    toml_file.read_to_string(&mut toml_string)?;
+    let set = set::parse_toml(toml_string)?;
+
+    if let Some(c) = set.commands.iter().find(|c| c.matches == command) {
+        println!("{}", c.output);
+        Ok(())
+    } else {
+        println!("Command not found");
+        process::exit(127)
+    }
+}
+
+fn save(command: String, set: String) {
+    todo!()
+}
+
+fn build(set_name: &str, path: &str) -> Result<(), FakeshError> {
+    let bin_path = PathBuf::from(path).join("bin");
+    fs::create_dir_all(&bin_path)?;
+    // fs::copy(set_name, &path)?;
+
+    let mut toml_file = File::open(set_name)?;
+    let mut toml_string = String::new();
+
+    toml_file.read_to_string(&mut toml_string)?;
+    let set = set::parse_toml(toml_string)?;
+
+    for command in set.commands {
+        let file_path = PathBuf::from(&bin_path).join(&command.matches);
+        let mut file = File::create(file_path)?;
+        let metadata = file.metadata()?;
+        let mut permissions = metadata.permissions();
+
+        permissions.set_mode(0o755);
+
+        let shebang = format!(
+            "#!/usr/bin/env bash\nfakesh exec {} \"{} $*\"",
+            set_name, command.matches
+        );
+
+        file.write_all(shebang.as_bytes())?;
+    }
+
+    Ok(())
+}
