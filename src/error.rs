@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub enum FakeshError {
     IoError(std::io::Error),
     TomlError(toml::de::Error),

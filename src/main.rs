@@ -8,7 +8,7 @@ use std::{
     fs::{self, File},
     io::{Read, Write},
     os::unix::prelude::PermissionsExt,
-    path::PathBuf,
+    path::{PathBuf, self},
     process,
 };
 
@@ -76,12 +76,11 @@ fn save(command: String, set: String) {
     todo!()
 }
 
-fn build(set_name: &str, path: &str) -> Result<(), FakeshError> {
+fn build(set_path: &str, path: &str) -> Result<(), FakeshError> {
     let bin_path = PathBuf::from(path).join("bin");
     fs::create_dir_all(&bin_path)?;
-    // fs::copy(set_name, &path)?;
 
-    let mut toml_file = File::open(set_name)?;
+    let mut toml_file = File::open(set_path)?;
     let mut toml_string = String::new();
 
     toml_file.read_to_string(&mut toml_string)?;
@@ -92,15 +91,15 @@ fn build(set_name: &str, path: &str) -> Result<(), FakeshError> {
         let mut file = File::create(file_path)?;
         let metadata = file.metadata()?;
         let mut permissions = metadata.permissions();
-
         permissions.set_mode(0o755);
+        file.set_permissions(permissions)?;
 
-        let shebang = format!(
-            "#!/usr/bin/env bash\nfakesh exec {} \"{} $*\"",
-            set_name, command.matches
+        let shell_script = format!(
+            "#!/usr/bin/env sh\nfakesh exec {} \"{} $*\"",
+            set_path, command.matches
         );
 
-        file.write_all(shebang.as_bytes())?;
+        file.write_all(shell_script.as_bytes())?;
     }
 
     Ok(())
