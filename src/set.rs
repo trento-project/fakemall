@@ -1,7 +1,5 @@
-use crate::error::FakeshError;
-
+use anyhow::Result;
 use serde::Deserialize;
-
 #[derive(Debug, Deserialize)]
 pub struct Set {
     pub commands: Vec<Command>,
@@ -13,7 +11,7 @@ pub struct Command {
     pub output: String,
 }
 
-pub fn parse_toml(toml_string: String) -> Result<Set, FakeshError> {
+pub fn parse_toml(toml_string: String) -> Result<Set> {
     let set: Set = toml::from_str(&toml_string)?;
 
     Ok(set)

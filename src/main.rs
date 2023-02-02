@@ -1,17 +1,15 @@
-mod dockerfile;
-mod error;
 mod set;
 
+use anyhow::Result;
 use clap::{Parser, Subcommand};
-use error::FakeshError;
+
 use std::{
     fs::{self, File},
     io::{Read, Write},
     os::unix::prelude::PermissionsExt,
-    path::{PathBuf, self},
+    path::{PathBuf},
     process,
 };
-
 /// A simple tool for building fake command line interfaces
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -46,7 +44,7 @@ enum Commands {
     },
 }
 
-fn main() -> Result<(), FakeshError> {
+fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match &cli.command {
@@ -56,7 +54,7 @@ fn main() -> Result<(), FakeshError> {
     }
 }
 
-fn exec(set: &str, command: &str) -> Result<(), FakeshError> {
+fn exec(set: &str, command: &str) -> Result<()> {
     let mut toml_file = File::open(set)?;
     let mut toml_string = String::new();
 
@@ -76,7 +74,7 @@ fn save(command: String, set: String) {
     todo!()
 }
 
-fn build(set_path: &str, path: &str) -> Result<(), FakeshError> {
+fn build(set_path: &str, path: &str) -> Result<()> {
     let bin_path = PathBuf::from(path).join("bin");
     fs::create_dir_all(&bin_path)?;
 
