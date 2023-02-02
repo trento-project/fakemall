@@ -93,7 +93,7 @@ fn build(set_path: &str, path: &str) -> Result<()> {
         file.set_permissions(permissions)?;
 
         let shell_script = format!(
-            "#!/usr/bin/env sh\nfakesh exec {} \"{} $*\"",
+            "#!/usr/bin/env sh\nfakemall exec {} \"{} $*\"",
             set_path, command.matches
         );
 

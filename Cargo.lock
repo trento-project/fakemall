@@ -85,7 +85,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "fakesh"
+name = "fakemall"
 version = "0.1.0"
 dependencies = [
  "anyhow",
