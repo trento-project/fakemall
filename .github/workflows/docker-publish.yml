@@ -5,8 +5,11 @@ on:
     branches: [ main ]
 
 jobs:
-  Deploy:
+  build_and_push:
     runs-on: ubuntu-latest
+    permissions:
+      content: read
+      packages: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@v1
