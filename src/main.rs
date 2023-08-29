@@ -65,7 +65,7 @@ fn exec(set: &str, command: &str) -> Result<()> {
         println!("{}", c.output);
         Ok(())
     } else {
-        println!("Command not found");
+        println!("{}: command not found", command);
         process::exit(127)
     }
 }
