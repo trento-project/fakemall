@@ -49,7 +49,7 @@ fn main() -> Result<()> {
 
     match &cli.command {
         Commands::Exec { set, command } => exec(set, command.trim()),
-        Commands::Save { set, command } => todo!(),
+        Commands::Save {.. } => todo!(),
         Commands::Build { set, path } => build(set, path),
     }
 }
@@ -68,10 +68,6 @@ fn exec(set: &str, command: &str) -> Result<()> {
         println!("{}: command not found", command);
         process::exit(127)
     }
-}
-
-fn save(command: String, set: String) {
-    todo!()
 }
 
 fn build(set_path: &str, path: &str) -> Result<()> {
