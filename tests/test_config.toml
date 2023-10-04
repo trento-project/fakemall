@@ -1,0 +1,3 @@
+[[commands]]
+matches = "dmidecode"
+output = "this is a sample output"

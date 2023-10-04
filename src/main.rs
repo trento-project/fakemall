@@ -7,7 +7,7 @@ use std::{
     fs::{self, File},
     io::{Read, Write},
     os::unix::prelude::PermissionsExt,
-    path::{PathBuf},
+    path::PathBuf,
     process,
 };
 /// A simple tool for building fake command line interfaces
@@ -49,7 +49,7 @@ fn main() -> Result<()> {
 
     match &cli.command {
         Commands::Exec { set, command } => exec(set, command.trim()),
-        Commands::Save {.. } => todo!(),
+        Commands::Save { .. } => todo!(),
         Commands::Build { set, path } => build(set, path),
     }
 }
