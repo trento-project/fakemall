@@ -1,5 +1,6 @@
 use anyhow::Result;
 use serde::Deserialize;
+
 #[derive(Debug, Deserialize)]
 pub struct Set {
     pub commands: Vec<Command>,
