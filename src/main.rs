@@ -1,5 +1,3 @@
-mod set;
-
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 
@@ -10,6 +8,9 @@ use std::{
     path::PathBuf,
     process,
 };
+
+use fakemall::set;
+
 /// A simple tool for building fake command line interfaces
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -28,13 +29,6 @@ enum Commands {
         /// Command to execute
         command: String,
     },
-    /// Save a command output to a set
-    Save {
-        /// Set to save command to
-        set: String,
-        /// Command to save
-        command: String,
-    },
     /// Build an environment from a set
     Build {
         /// Set to build
@@ -49,7 +43,6 @@ fn main() -> Result<()> {
 
     match &cli.command {
         Commands::Exec { set, command } => exec(set, command.trim()),
-        Commands::Save { .. } => todo!(),
         Commands::Build { set, path } => build(set, path),
     }
 }
